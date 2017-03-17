@@ -1,0 +1,27 @@
+wget https://gist.githubusercontent.com/pmorie/cdd16368fac1eb8c73891561225ce693/raw/02a07fff81eb24c91f830aea6be0ad99f98316e9/template.yaml
+oc new-project paul
+oc process -f template.yaml | oc create -f -
+git clone https://www.github.com/kubernetes-incubator/service-catalog.git
+cd service-catalog/
+export NO_DOCKER=1
+make apiserver-image controller-manager-image
+
+sudo yum install golang hg
+wget https://github.com/Masterminds/glide/releases/download/v0.12.3/glide-v0.12.3-linux-amd64.tar.gz
+tar -zxf glide-v0.12.3-linux-amd64.tar.gz
+cd linux-amd64/
+sudo cp glide /usr/bin/
+
+cd ~
+export GOPATH=$(pwd)
+mkdir -p src/github.com/kubernetes-incubator
+cp -r service-catalog/ src/github.com/kubernetes-incubator/
+cd src/github.com/kubernetes-incubator/service-catalog
+make apiserver-image controller-manager-image
+
+wget https://gist.githubusercontent.com/pmorie/f1f5154412639ae603000524b3d1847a/raw/56b2b31d31701950cb24d20591c1b53235d7b600/kubeconfig.yaml
+
+wget https://raw.githubusercontent.com/pmorie/service-catalog/436f9488063fb2bd3334b4f11c7ca88590c836ec/contrib/examples/walkthrough/ups-broker.yaml
+wget https://storage.googleapis.com/golang/go1.8.linux-amd64.tar.gz
+tar -zxf go1.8.linux-amd64.tar.gz
+export GOROOT=/home/vagrant/go
